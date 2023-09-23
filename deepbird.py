@@ -13,6 +13,43 @@ import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 ##TODO Define Modell for Classification
+##TODO Make the MelSpectograms the same length
+class AudioClassifier(nn.Module):
+    def __init__(self, num_classes):
+        super(AudioClassifier, self).__init__()
+
+        # Convolutional layers
+        self.conv1 = nn.Conv2d(1, 32, kernel_size=(3, 3), padding=(1, 1))
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=(3, 3), padding=(1, 1))
+        self.conv3 = nn.Conv2d(64, 128, kernel_size=(3, 3), padding=(1, 1))
+        self.conv4 = nn.Conv2d(128, 256, kernel_size=(3, 3), padding=(1, 1))
+
+        # Max-pooling layers
+        self.pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
+
+        # Fully connected layers
+        self.fc1 = nn.Linear(256 * 4 * 4, 512)  # Adjust the input size based on your spectrogram size
+        self.fc2 = nn.Linear(512, num_classes)
+
+        # Dropout layer to prevent overfitting
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        x = self.pool(torch.relu(self.conv1(x)))
+        x = self.pool(torch.relu(self.conv2(x)))
+        x = self.pool(torch.relu(self.conv3(x)))
+        x = self.pool(torch.relu(self.conv4(x)))
+
+        # Flatten the tensor before fully connected layers
+        x = x.view(-1, 256 * 4 * 4)
+
+        x = self.dropout(torch.relu(self.fc1(x)))
+        x = self.fc2(x)
+
+        return x
+
+
+
 
 def transformAudio(waveform,sample_rate):
     # Compute the Mel spectrogram
@@ -26,13 +63,13 @@ def transformAudio(waveform,sample_rate):
     # Convert to decibels (log-scale)
     mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
     # Visualize the Mel spectrogram
-    plt.figure(figsize=(10, 4))
-    librosa.display.specshow(mel_spec_db, x_axis='time', y_axis='mel', sr=sample_rate, hop_length=hop_length,
-                             cmap='viridis')
-    plt.colorbar(format='%+2.0f dB')
-    plt.title('Mel Spectrogram')
-    plt.show()
-    exit()
+    # plt.figure(figsize=(10, 4))
+    # librosa.display.specshow(mel_spec_db, x_axis='time', y_axis='mel', sr=sample_rate, hop_length=hop_length,
+    #                          cmap='viridis')
+    # plt.colorbar(format='%+2.0f dB')
+    # plt.title('Mel Spectrogram')
+    # plt.show()
+    #exit()
 
     return mel_spec_db
 
@@ -125,20 +162,45 @@ test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
 batch_size = 32
 learning_rate = 0.001
 num_epochs = 10
-dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+#dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+# Create an instance of the AudioClassifier model
+num_classes = 264  # Set the number of classes
+model = AudioClassifier(num_classes)
+
+# Print the model architecture
+print(model)
 
 # Define loss function and optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-exit()
+
+# Define device (GPU or CPU)
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+model.to(device)
+print(train_loader)
+#exit()
 
 # Training loop
 for epoch in range(num_epochs):
-    # Training loop
     model.train()
-    for inputs, labels in train_loader:
-        optimizer.zero_grad()
-        outputs = model(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
+    running_loss = 0.0
+    for mel_spectrogram, labels in train_loader:
+        # Transfer data to the selected device
+        mel_spectrogram = mel_spectrogram.to(device)
+        labels = labels.to(device)
+
+        optimizer.zero_grad()  # Zero the gradients
+        outputs = model(mel_spectrogram)  # Forward pass
+        loss = criterion(outputs, labels)  # Compute loss
+        loss.backward()  # Backpropagation
+        optimizer.step()  # Update model weights
+
+        running_loss += loss.item()
+
+    # Print average loss for the epoch
+    average_loss = running_loss / len(train_loader)
+    print(f"Epoch [{epoch+1}/{num_epochs}] - Loss: {average_loss:.4f}")
+
+# Save the trained model (optional)
+torch.save(model.state_dict(), 'audio_classifier_model.pth')
