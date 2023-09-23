@@ -65,46 +65,9 @@ def transformAudio(audio,sample_rate):
     n_fft = 1024  # Size of the FFT window
     hop_length = 256  # Hop size for spectrogram frames
     n_mels = 128  # Number of Mel filterbanks
-    segment_length = 1
 
     audio = librosa.resample(audio, orig_sr=32000, target_sr=20000)
     #Compute MelSpectogram
-
-    duration = len(audio) / 20000
-    print(f"Duration: {duration} seconds")
-    num_of_samples = audio.shape[0]
-    print(f"Number of samples: {num_of_samples}")
-    num_channels = audio.shape[1] if len(audio.shape) > 1 else 1
-    print(f"Number of channels: {num_channels}")
-    total_samples = len(audio)
-    samples_per_segment = int(segment_length * 20000)
-    num_segments = total_samples // samples_per_segment
-    segments = [audio[i * samples_per_segment:(i + 1) * samples_per_segment] for i in range(num_segments)]
-
-    # x = 0
-    # for segment in segments:
-    #     mel_spec = librosa.feature.melspectrogram(y=segment, sr=20000, n_fft=n_fft, hop_length=hop_length,
-    #                                               n_mels=n_mels, fmin=20,fmax=20000)
-    #     mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)  # Convert to dB scale
-    #
-    #     # Normalize the mel-spectrogram
-    #     normalized_mel_spec = (mel_spec_db - mel_spec_db.min()) / (mel_spec_db.max() - mel_spec_db.min())
-    #     mel_spec_length = mel_spec.shape[1]
-    #     print(f"Mel spectrogram length: {mel_spec_length} frames")
-    #
-    #     # Pad or trim to a fixed length (if needed)
-    #
-    #     if normalized_mel_spec.shape[1] < desired_length:
-    #         # Pad with zeros
-    #         pad_width = desired_length - normalized_mel_spec.shape[1]
-    #         normalized_mel_spec = np.pad(normalized_mel_spec, pad_width=((0, 0), (0, pad_width)), mode='constant')
-    #     elif normalized_mel_spec.shape[1] > desired_length:
-    #         # Trim to desired length
-    #         normalized_mel_spec = normalized_mel_spec[:, :desired_length]
-    #     print('Len of trimmed or padded melspec:', normalized_mel_spec.shape[1])
-
-    #exit()
-
     mel_spec = librosa.feature.melspectrogram(y=audio, sr=20000, n_fft=n_fft, hop_length=hop_length,
                                               n_mels=n_mels, fmin=20)
     # Convert to decibels (log-scale)
@@ -167,6 +130,19 @@ class AudioClassificationDataset(Dataset):
         # Convert the class label to a numerical label
         converted_labels = class_to_index[class_label]
         label_tensor = torch.tensor(converted_labels, dtype=torch.long)  # Use torch.float32 for regression tasks
+        # Define the desired shape (e.g., 128 rows and 940 columns)
+        desired_length = 1000
+
+        if melSpectogram.shape[1] < desired_length:
+            # Pad with zeros
+            pad_width = desired_length - melSpectogram.shape[1]
+            melSpectogram = np.pad(melSpectogram, pad_width=((0, 0), (0, pad_width)), mode='constant')
+        elif melSpectogram.shape[1] > desired_length:
+            # Trim to desired length
+            melSpectogram = melSpectogram[:, :desired_length]
+        print('Len of trimmed or padded melspec:', melSpectogram.shape)
+        #exit()
+        ##TODO Find the minimum size of arr padding
 
         return melSpectogram,label_tensor
 
