@@ -2,15 +2,26 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import librosa
+import scipy.signal
 import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader,Dataset
+import torch.nn.functional as F
 import os
 
+#contents of train_audio
+audio_data_dir = 'data/train_audio/'
+#train_metadata.csv
+csv_file = 'data/train_metadata.csv'
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+# Create a dictionary that maps class labels to numerical labels
+data = pd.read_csv(csv_file)
+labels_arr = data['primary_label']
+class_to_index = {class_label: index for index, class_label in enumerate(labels_arr)}
+
 
 ##TODO Define Modell for Classification
 ##TODO Make the MelSpectograms the same length
@@ -19,31 +30,29 @@ class AudioClassifier(nn.Module):
         super(AudioClassifier, self).__init__()
 
         # Convolutional layers
-        self.conv1 = nn.Conv2d(1, 32, kernel_size=(3, 3), padding=(1, 1))
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=(3, 3), padding=(1, 1))
-        self.conv3 = nn.Conv2d(64, 128, kernel_size=(3, 3), padding=(1, 1))
-        self.conv4 = nn.Conv2d(128, 256, kernel_size=(3, 3), padding=(1, 1))
+        self.conv1 = nn.Conv2d(32, 64, kernel_size=(3, 3), padding=(1, 1))
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=(3, 3), padding=(1, 1))
+        self.conv3 = nn.Conv2d(128, 256, kernel_size=(3, 3), padding=(1, 1))
 
         # Max-pooling layers
         self.pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
 
         # Fully connected layers
-        self.fc1 = nn.Linear(256 * 4 * 4, 512)  # Adjust the input size based on your spectrogram size
-        self.fc2 = nn.Linear(512, num_classes)
+        self.fc1 = nn.Linear(256 * 4 * 4, 500)  # Adjust the input size based on your spectrogram size
+        self.fc2 = nn.Linear(500, num_classes)
 
         # Dropout layer to prevent overfitting
         self.dropout = nn.Dropout(0.5)
 
     def forward(self, x):
-        x = self.pool(torch.relu(self.conv1(x)))
-        x = self.pool(torch.relu(self.conv2(x)))
-        x = self.pool(torch.relu(self.conv3(x)))
-        x = self.pool(torch.relu(self.conv4(x)))
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = self.pool(F.relu(self.conv3(x)))
 
         # Flatten the tensor before fully connected layers
         x = x.view(-1, 256 * 4 * 4)
 
-        x = self.dropout(torch.relu(self.fc1(x)))
+        x = self.dropout(F.relu(self.fc1(x)))
         x = self.fc2(x)
 
         return x
@@ -51,14 +60,52 @@ class AudioClassifier(nn.Module):
 
 
 
-def transformAudio(waveform,sample_rate):
+def transformAudio(audio,sample_rate):
     # Compute the Mel spectrogram
     n_fft = 1024  # Size of the FFT window
     hop_length = 256  # Hop size for spectrogram frames
     n_mels = 128  # Number of Mel filterbanks
+    segment_length = 1
+
+    audio = librosa.resample(audio, orig_sr=32000, target_sr=20000)
     #Compute MelSpectogram
 
-    mel_spec = librosa.feature.melspectrogram(y=waveform, sr=sample_rate, n_fft=n_fft, hop_length=hop_length,
+    duration = len(audio) / 20000
+    print(f"Duration: {duration} seconds")
+    num_of_samples = audio.shape[0]
+    print(f"Number of samples: {num_of_samples}")
+    num_channels = audio.shape[1] if len(audio.shape) > 1 else 1
+    print(f"Number of channels: {num_channels}")
+    total_samples = len(audio)
+    samples_per_segment = int(segment_length * 20000)
+    num_segments = total_samples // samples_per_segment
+    segments = [audio[i * samples_per_segment:(i + 1) * samples_per_segment] for i in range(num_segments)]
+
+    # x = 0
+    # for segment in segments:
+    #     mel_spec = librosa.feature.melspectrogram(y=segment, sr=20000, n_fft=n_fft, hop_length=hop_length,
+    #                                               n_mels=n_mels, fmin=20,fmax=20000)
+    #     mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)  # Convert to dB scale
+    #
+    #     # Normalize the mel-spectrogram
+    #     normalized_mel_spec = (mel_spec_db - mel_spec_db.min()) / (mel_spec_db.max() - mel_spec_db.min())
+    #     mel_spec_length = mel_spec.shape[1]
+    #     print(f"Mel spectrogram length: {mel_spec_length} frames")
+    #
+    #     # Pad or trim to a fixed length (if needed)
+    #
+    #     if normalized_mel_spec.shape[1] < desired_length:
+    #         # Pad with zeros
+    #         pad_width = desired_length - normalized_mel_spec.shape[1]
+    #         normalized_mel_spec = np.pad(normalized_mel_spec, pad_width=((0, 0), (0, pad_width)), mode='constant')
+    #     elif normalized_mel_spec.shape[1] > desired_length:
+    #         # Trim to desired length
+    #         normalized_mel_spec = normalized_mel_spec[:, :desired_length]
+    #     print('Len of trimmed or padded melspec:', normalized_mel_spec.shape[1])
+
+    #exit()
+
+    mel_spec = librosa.feature.melspectrogram(y=audio, sr=20000, n_fft=n_fft, hop_length=hop_length,
                                               n_mels=n_mels, fmin=20)
     # Convert to decibels (log-scale)
     mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
@@ -113,14 +160,18 @@ class AudioClassificationDataset(Dataset):
 
         #print('here'+self.labels)
         #exit()
+        # Convert the label to a tensor (assuming it's an integer label)
+        # Retrieve the class label for this sample from your dataset's data source
+        class_label = self.data.iloc[idx].split('/')[0]
 
-        return melSpectogram,self.labels
+        # Convert the class label to a numerical label
+        converted_labels = class_to_index[class_label]
+        label_tensor = torch.tensor(converted_labels, dtype=torch.long)  # Use torch.float32 for regression tasks
+
+        return melSpectogram,label_tensor
 
 
-#contents of train_audio
-audio_data_dir = 'data/train_audio/'
-#train_metadata.csv
-csv_file = 'data/train_metadata.csv'
+
 
 # Create an instance of your custom dataset
 dataset = AudioClassificationDataset(audio_data_dir, csv_file)
