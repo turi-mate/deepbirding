@@ -277,7 +277,9 @@ for epoch in range(num_epochs):
             # plt.title('Mel Spectrogram')
             # plt.show()
             # Convert the NumPy array to a PyTorch tensor
-            mel_spectrogram_tensor = torch.tensor(mel_spectrogram[index], dtype=torch.float32)
+            print('sp:',mel_spectrogram[index].shape)
+            mel_spectrogram_tensor = torch.from_numpy(np.array(mel_spectrogram[index]))
+            print('tensor',mel_spectrogram_tensor)
             mel_spectrogram_tensor.to(device)
             labels.to(device)
             optimizer.zero_grad()  # Zero the gradients
