@@ -192,7 +192,12 @@ class AudioClassificationDataset(Dataset):
         label_tensor = torch.tensor(converted_labels, dtype=torch.long)  # Use torch.float32 for regression tasks
         print('Len of trimmed or padded melspec:', melSpectogram[0].shape)
 
-        return melSpectogram, label_tensor
+        mel_spectrogram_tensor = torch.from_numpy(np.array(melSpectogram))
+        print('tensor', mel_spectrogram_tensor)
+        mel_spectrogram_tensor = mel_spectrogram_tensor.unsqueeze(0)
+        print('mel tensor shape ', mel_spectrogram_tensor.shape)
+
+        return mel_spectrogram_tensor, label_tensor
 
 
 # Create an instance of your custom dataset
@@ -224,7 +229,8 @@ train_sampler = torch.utils.data.SubsetRandomSampler(train_indices)
 val_sampler = torch.utils.data.SubsetRandomSampler(val_indices)
 test_sampler = torch.utils.data.SubsetRandomSampler(test_indices)
 
-# Adjust as needed
+# Create data loaders for train, validation, and test sets
+batch_size = 32
 train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
 val_loader = DataLoader(dataset, batch_size=batch_size, sampler=val_sampler)
 test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
@@ -258,44 +264,56 @@ print('here', train_loader)
 for epoch in range(num_epochs):
     model.train()
     running_loss = 0.0
-    for mel_spectrogram, labels in dataset:
 
-        mel_spectrogram = np.array(mel_spectrogram)
-        for index, lab in enumerate(mel_spectrogram):
-            # Visualize the Mel spectrogram
-            # plt.figure(figsize=(10, 4))
-            # librosa.display.specshow(mel_spectrogram[index], x_axis='time', y_axis='mel', sr=32000, hop_length=256,
-            #                          cmap='viridis')
-            # plt.colorbar(format='%+2.0f dB')
-            # plt.title('Mel Spectrogram')
-            # plt.show()
-            # Convert the NumPy array to a PyTorch tensor
+    for mel_spectrogram, labels in train_loader:
 
-            print('sp:', mel_spectrogram[index].shape)
-            mel_spectrogram_tensor = torch.from_numpy(np.array(mel_spectrogram[index]))
-            print('tensor', mel_spectrogram_tensor)
-            mel_spectrogram_tensor = mel_spectrogram_tensor.unsqueeze(0).unsqueeze(0)
-            print('mel tensor shape ', mel_spectrogram_tensor.shape)
+        mel_spectrogram.to(device)
+        labels.to(device)
 
-            mel_spectrogram_tensor.to(device)
-            print('labels ', labels)
-            labels.to(device)
-            optimizer.zero_grad()  # Zero the gradients
-            outputs = model(mel_spectrogram_tensor)  # Forward pass
-            outputs = outputs.flatten()
-            print('outputs shape ', outputs.shape)
+        optimizer.zero_grad()  # Zero the gradients
+        outputs = model(mel_spectrogram)  # Forward pass
+        outputs = outputs.flatten()
+        print('outputs shape ', outputs.shape)
 
-            loss = criterion(outputs, labels)  # Compute loss
-            loss.backward()  # Backpropagation
-            optimizer.step()  # Update model weights
-            running_loss += loss.item()
-
-        #exit()
-        # Transfer data to the selected device
+        loss = criterion(outputs, labels)  # Compute loss
+        loss.backward()  # Backpropagation
+        optimizer.step()  # Update model weights
+        running_loss += loss.item()
 
     # Print average loss for the epoch
     average_loss = running_loss / len(train_loader)
     print(f"Epoch [{epoch + 1}/{num_epochs}] - Loss: {average_loss:.4f}")
+
+    model.eval()  # Set the model to evaluation mode
+    val_loss = 0.0
+    val_predictions = []
+    val_targets = []
+
+    with torch.no_grad():  # Disable gradient computation during validation
+        for mel_spectrogram, labels in val_loader:
+            # Transfer data to the selected device
+            mel_spectrogram = mel_spectrogram.to(device)
+            labels = labels.to(device)
+
+            # Forward pass
+            outputs = model(mel_spectrogram)
+            outputs = outputs.flatten()
+
+            # Compute validation loss
+            loss = criterion(outputs, labels)
+            val_loss += loss.item()
+
+            # Store predictions and targets for later evaluation
+            val_predictions.extend(outputs.cpu().numpy())
+            val_targets.extend(labels.cpu().numpy())
+
+    # Calculate average validation loss
+    average_val_loss = val_loss / len(val_loader)
+    print(f"Epoch [{epoch + 1}/{num_epochs}] - Validation Loss: {average_val_loss:.4f}")
+
+    # Calculate and print other relevant validation metrics
+    accuracy = accuracy_score(val_targets, np.round(val_predictions))
+    print(f"Epoch [{epoch + 1}/{num_epochs}] - Validation Accuracy: {accuracy:.4f}")
 
 # Save the trained model (optional)
 torch.save(model.state_dict(), 'audio_classifier_model.pth')
