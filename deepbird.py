@@ -11,6 +11,7 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader,Dataset
 import torch.nn.functional as F
 import os
+from PIL import Image
 
 #contents of train_audio
 audio_data_dir = 'data/train_audio/'
@@ -65,32 +66,85 @@ def transformAudio(audio,sample_rate):
     n_fft = 1024  # Size of the FFT window
     hop_length = 256  # Hop size for spectrogram frames
     n_mels = 128  # Number of Mel filterbanks
+    segment_duration = 5.0  # egy segment hossza
+    mel_start_freq = 40.0
+    mel_end_freq = 15000
+    # durationFile = 20 # 0.5min
+    durationFile = librosa.get_duration(y=audio, sr=32000)
+    audio_segments_arr = []
 
-    audio = librosa.resample(audio, orig_sr=32000, target_sr=20000)
-    #Compute MelSpectogram
-    mel_spec = librosa.feature.melspectrogram(y=audio, sr=20000, n_fft=n_fft, hop_length=hop_length,
-                                              n_mels=n_mels, fmin=20)
-    # Convert to decibels (log-scale)
-    mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
-    # Visualize the Mel spectrogram
-    # plt.figure(figsize=(10, 4))
-    # librosa.display.specshow(mel_spec_db, x_axis='time', y_axis='mel', sr=sample_rate, hop_length=hop_length,
-    #                          cmap='viridis')
-    # plt.colorbar(format='%+2.0f dB')
-    # plt.title('Mel Spectrogram')
-    # plt.show()
-    #exit()
+    durationFileInSamples = int(durationFile * 32000)
+    segmentDurationInSamples = int(segment_duration * 32000)
 
-    return mel_spec_db
+    for startSample in range(0, durationFileInSamples, segmentDurationInSamples):
+        endSample = startSample + segmentDurationInSamples
+
+        sampleVec = audio[startSample:endSample]
+
+        # Get mel spectrogram
+        melSpec = librosa.feature.melspectrogram(y=sampleVec, sr=32000, n_fft=n_fft,
+                                                 hop_length=hop_length, n_mels=n_mels, fmin=mel_start_freq,
+                                                 fmax=mel_end_freq, power=2.0)
+
+        # Convert to decibels (log-scale)
+        mel_spec_db = librosa.power_to_db(melSpec, ref=np.max, top_db=100)
+        nLowFreqsInPixelToCut = int(2 / 2.0)
+        nHighFreqsInPixelToCut = int(4 / 2.0)
+
+        # if nHighFreqsInPixelToCut:
+        #     mel_spec_db = mel_spec_db[nLowFreqsInPixelToCut:-nHighFreqsInPixelToCut]
+        # else:
+        #     mel_spec_db = mel_spec_db[nLowFreqsInPixelToCut:]
+
+        # Normalize values between 0 and 1 (& prevent divide by zero)
+        mel_spec_db -= mel_spec_db.min()
+        melSpecMax = mel_spec_db.max()
+        if melSpecMax:
+            melSpec /= melSpecMax
+
+        maxVal = 255.9
+        mel_spec_db *= maxVal
+        mel_spec_db = maxVal - mel_spec_db
+        audio_segments_arr.append(mel_spec_db)
+
+        # # Resize
+        # specImagePil = Image.fromarray(melSpec.astype(np.uint8))
+        # specImagePil = specImagePil.resize(imageSize, interpolationMethod)
+        #
+        # # Expand to 3 channels
+        # specImage = specImagePil.convert('RGB')
+        # plt.imshow(specImage)
+        # plt.axis('off')  # Turn off axis labels and ticks
+        # plt.show()
+
+        # Visualize the Mel spectrogram
+        # plt.figure(figsize=(10, 4))
+        # librosa.display.specshow(mel_spec_db, x_axis='time', y_axis='mel', sr=sample_rate, hop_length=hop_length,
+        #                          cmap='viridis')
+        # plt.colorbar(format='%+2.0f dB')
+        # plt.title('Mel Spectrogram')
+        # plt.show()
+
+    # exit()
+
+    # [x,y] 1D n_mels = 128 2D audio_length
+    return audio_segments_arr
+
+
+# Define a function to resize a Mel spectrogram to a target shape
+def resize_mel_spectrogram(mel_spec, target_shape):
+    return scipy.ndimage.zoom(mel_spec, (1, target_shape / mel_spec.shape[1]))
 
 class AudioClassificationDataset(Dataset):
-    def __init__(self, data_dir, csv_file, transform=None):
+    def __init__(self, data_dir, csv_file, transform=None, shuffle=False,batch_size = 10):
         self.data_dir = data_dir
         self.csv_file = csv_file
         self.transform = transform
         self.audio_data_filename_arr = []
         self.labels = []
         self.data = self._load_data()
+        self.shuffle = shuffle
+        self.batch_size = batch_size
 
     #Itt tortenik a labelek es a hozzajuk tartozo fileok kiszedese a csv segitsegevel
     def _load_data(self):
@@ -104,6 +158,8 @@ class AudioClassificationDataset(Dataset):
         return len(self.audio_data_filename_arr)
 
     def __getitem__(self, idx):
+        fixed_size = 30
+        ##TODO file does not exist check
         audio_file = os.path.join(audio_data_dir, self.audio_data_filename_arr[idx])
         print('audiofile',audio_file)
         self.labels = self.data.iloc[idx].split('/')[0]
@@ -113,6 +169,13 @@ class AudioClassificationDataset(Dataset):
 
         melSpectogram = transformAudio(waveform,sample_rate)
 
+        # Apply fixed size padding or trimming to each array in the list
+        for i in range(len(melSpectogram)):
+            # Ensure that each segment has the default shape (128, 626)
+            if melSpectogram[i].shape != 626:
+                melSpectogram[i] = resize_mel_spectrogram(melSpectogram[i], 626)
+
+        # Apply fixed size padding or trimming
         # plt.figure(figsize=(10, 4))
         # plt.plot(waveform.t().numpy())
         # plt.xlabel('Time (s)')
@@ -126,23 +189,12 @@ class AudioClassificationDataset(Dataset):
         # Convert the label to a tensor (assuming it's an integer label)
         # Retrieve the class label for this sample from your dataset's data source
         class_label = self.data.iloc[idx].split('/')[0]
+        print('label:', class_label)
 
         # Convert the class label to a numerical label
         converted_labels = class_to_index[class_label]
         label_tensor = torch.tensor(converted_labels, dtype=torch.long)  # Use torch.float32 for regression tasks
-        # Define the desired shape (e.g., 128 rows and 940 columns)
-        desired_length = 1000
-
-        if melSpectogram.shape[1] < desired_length:
-            # Pad with zeros
-            pad_width = desired_length - melSpectogram.shape[1]
-            melSpectogram = np.pad(melSpectogram, pad_width=((0, 0), (0, pad_width)), mode='constant')
-        elif melSpectogram.shape[1] > desired_length:
-            # Trim to desired length
-            melSpectogram = melSpectogram[:, :desired_length]
-        print('Len of trimmed or padded melspec:', melSpectogram.shape)
-        #exit()
-        ##TODO Find the minimum size of arr padding
+        print('Len of trimmed or padded melspec:', melSpectogram[0].shape)
 
         return melSpectogram,label_tensor
 
@@ -150,7 +202,8 @@ class AudioClassificationDataset(Dataset):
 
 
 # Create an instance of your custom dataset
-dataset = AudioClassificationDataset(audio_data_dir, csv_file)
+batch_size = 32
+dataset = AudioClassificationDataset(audio_data_dir, csv_file, shuffle=True,batch_size=batch_size)
 
 # Define train, validation, and test split ratios
 train_ratio = 0.7
@@ -177,7 +230,7 @@ train_sampler = torch.utils.data.SubsetRandomSampler(train_indices)
 val_sampler = torch.utils.data.SubsetRandomSampler(val_indices)
 test_sampler = torch.utils.data.SubsetRandomSampler(test_indices)
 
-batch_size = 32  # Adjust as needed
+  # Adjust as needed
 train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
 val_loader = DataLoader(dataset, batch_size=batch_size, sampler=val_sampler)
 test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
@@ -205,25 +258,41 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 # Define device (GPU or CPU)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
-print(train_loader)
-#exit()
+print('here', train_loader)
+# exit()
 
 # Training loop
 for epoch in range(num_epochs):
     model.train()
     running_loss = 0.0
-    for mel_spectrogram, labels in train_loader:
+    for mel_spectrogram, labels in dataset:
+
+        mel_spectrogram = np.array(mel_spectrogram)
+        for index,lab in enumerate(mel_spectrogram):
+            #Visualize the Mel spectrogram
+            # plt.figure(figsize=(10, 4))
+            # librosa.display.specshow(mel_spectrogram[index], x_axis='time', y_axis='mel', sr=32000, hop_length=256,
+            #                          cmap='viridis')
+            # plt.colorbar(format='%+2.0f dB')
+            # plt.title('Mel Spectrogram')
+            # plt.show()
+            # Convert the NumPy array to a PyTorch tensor
+            print('sp:',mel_spectrogram[index].shape)
+            mel_spectrogram_tensor = torch.from_numpy(np.array(mel_spectrogram[index]))
+            print('tensor',mel_spectrogram_tensor)
+            mel_spectrogram_tensor.to(device)
+            labels.to(device)
+            optimizer.zero_grad()  # Zero the gradients
+            outputs = model(mel_spectrogram)  # Forward pass
+
+            loss = criterion(outputs, labels)  # Compute loss
+            loss.backward()  # Backpropagation
+            optimizer.step()  # Update model weights
+            running_loss += loss.item()
+
+        exit()
         # Transfer data to the selected device
-        mel_spectrogram = mel_spectrogram.to(device)
-        labels = labels.to(device)
 
-        optimizer.zero_grad()  # Zero the gradients
-        outputs = model(mel_spectrogram)  # Forward pass
-        loss = criterion(outputs, labels)  # Compute loss
-        loss.backward()  # Backpropagation
-        optimizer.step()  # Update model weights
-
-        running_loss += loss.item()
 
     # Print average loss for the epoch
     average_loss = running_loss / len(train_loader)
