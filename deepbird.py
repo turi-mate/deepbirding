@@ -84,7 +84,7 @@ class AudioClassifier(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
 
         self.fc1 = nn.Linear(256 * 16 * 78, 512)  # Adjust input size based on your spectrogram size
-        self.fc2 = nn.Linear(512, num_classes)
+        self.fc2 = nn.Linear(512, 264)
 
         self.dropout = nn.Dropout(0.5)
 
@@ -203,7 +203,7 @@ class AudioClassificationDataset(Dataset):
         fixed_size = 30
         ##TODO file does not exist check
         audio_file = os.path.join(audio_data_dir, self.audio_data_filename_arr[idx])
-        print('audiofile', audio_file)
+        #print('audiofile', audio_file)
         self.labels = self.data.iloc[idx].split('/')[0]
         # print('label',self.labels)
 
