@@ -43,7 +43,9 @@ with open(csv_file, 'r', encoding='utf-8') as csvfile:
         column_value = row[0].strip()  # Use .strip() to remove leading/trailing whitespaces
 
         # Add the value to the set
-        unique_values.add(column_value)
+        if column_value not in unique_values:
+            unique_values.add(column_value)
+
 
 # Convert the set to a list before applying fit_transform
 unique_values_list = list(unique_values)
@@ -51,6 +53,18 @@ unique_values_list = list(unique_values)
 label_to_number_mapping = {label: index for index, label in enumerate(unique_values_list)}
 print('mapped_values', label_to_number_mapping)
 
+data = pd.read_csv(csv_file)
+
+# Specify the column to check for missing values
+column_name = 'filename'  # Replace 'column_name' with the actual column name in your CSV file
+
+# Check if the specified column contains missing values in any row
+has_missing_values = data[column_name].isna().any()
+
+if has_missing_values:
+    print(f"The column '{column_name}' contains missing values in some rows.")
+else:
+    print(f"The column '{column_name}' does not contain missing values in any row.")
 
 # Fit and transform the labels to numerical values
 # encoded_labels = label_encoder.fit_transform(unique_values_list)
@@ -210,11 +224,14 @@ class AudioClassificationDataset(Dataset):
 
             # Convert the class label to a numerical label
             label_variable = label_to_number_mapping.get(class_label, -1)
+            if label_variable == -1:
+                print(f"Error: Class label '{class_label}' not found in the mapping.")
+                return None
             # print('converted',converted_labels)
             label_tensor = torch.tensor(label_variable, dtype=torch.long)  # Use torch.float32 for regression tasks
             # print('Len of trimmed or padded melspec:', melSpectogram[0].shape)
             # print('MelSpecShape',mel_spec_db_tensor.size())
-            return mel_spec_db_tensor, label_tensor
+        return mel_spec_db_tensor, label_tensor
 
     def collate_fn(self, batch):
         # Pad the mel spectrograms within the batch to have the same length
