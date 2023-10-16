@@ -8,20 +8,53 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset
-from torch.utils.data import DataLoader,Dataset
+from torch.utils.data import DataLoader, Dataset
 import torch.nn.functional as F
 import os
+import csv
+from sklearn.preprocessing import LabelEncoder
 from PIL import Image
 
-#contents of train_audio
+# contents of train_audio
 audio_data_dir = 'data/train_audio/'
-#train_metadata.csv
+# train_metadata.csv
 csv_file = 'data/train_metadata.csv'
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 # Create a dictionary that maps class labels to numerical labels
 data = pd.read_csv(csv_file)
 labels_arr = data['primary_label']
 class_to_index = {class_label: index for index, class_label in enumerate(labels_arr)}
+
+# Get all unique labels from csv
+unique_values = set()
+# Initialize the label encoder
+label_encoder = LabelEncoder()
+
+# Open the CSV file and read unique values from a specific column (e.g., column index 0)
+with open(csv_file, 'r', encoding='utf-8') as csvfile:
+    csvreader = csv.reader(csvfile)
+
+    # Skip header row if it exists
+    next(csvreader, None)
+
+    # Iterate through rows and extract unique values from a specific column
+    for row in csvreader:
+        # Assuming the column index is 0 (change it to the appropriate index)
+        column_value = row[0].strip()  # Use .strip() to remove leading/trailing whitespaces
+
+        # Add the value to the set
+        unique_values.add(column_value)
+
+# Convert the set to a list before applying fit_transform
+unique_values_list = list(unique_values)
+# Create a dictionary mapping string labels to numbers from 0 to 263
+label_to_number_mapping = {label: index for index, label in enumerate(unique_values_list)}
+print('mapped_values', label_to_number_mapping)
+
+
+# Fit and transform the labels to numerical values
+# encoded_labels = label_encoder.fit_transform(unique_values_list)
+# print('Encoded Labels:', label_to_number_mapping)
 
 
 ##TODO Define Modell for Classification
@@ -30,19 +63,15 @@ class AudioClassifier(nn.Module):
     def __init__(self, num_classes):
         super(AudioClassifier, self).__init__()
 
-        # Convolutional layers
-        self.conv1 = nn.Conv2d(32, 64, kernel_size=(3, 3), padding=(1, 1))
-        self.conv2 = nn.Conv2d(64, 128, kernel_size=(3, 3), padding=(1, 1))
-        self.conv3 = nn.Conv2d(128, 256, kernel_size=(3, 3), padding=(1, 1))
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        self.conv3 = nn.Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
 
-        # Max-pooling layers
         self.pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
 
-        # Fully connected layers
-        self.fc1 = nn.Linear(256 * 4 * 4, 500)  # Adjust the input size based on your spectrogram size
-        self.fc2 = nn.Linear(500, num_classes)
+        self.fc1 = nn.Linear(256 * 16 * 78, 512)  # Adjust input size based on your spectrogram size
+        self.fc2 = nn.Linear(512, num_classes)
 
-        # Dropout layer to prevent overfitting
         self.dropout = nn.Dropout(0.5)
 
     def forward(self, x):
@@ -50,18 +79,16 @@ class AudioClassifier(nn.Module):
         x = self.pool(F.relu(self.conv2(x)))
         x = self.pool(F.relu(self.conv3(x)))
 
-        # Flatten the tensor before fully connected layers
-        x = x.view(-1, 256 * 4 * 4)
+        num_features = x.size(1) * x.size(2) * x.size(3)
+        x = x.view(-1, num_features)  # Reshape based on the calculated number of features
 
-        x = self.dropout(F.relu(self.fc1(x)))
+        x = self.fc1(x)
         x = self.fc2(x)
 
         return x
 
 
-
-
-def transformAudio(audio,sample_rate):
+def transformAudio(audio, sample_rate):
     # Compute the Mel spectrogram
     n_fft = 1024  # Size of the FFT window
     hop_length = 256  # Hop size for spectrogram frames
@@ -135,8 +162,9 @@ def transformAudio(audio,sample_rate):
 def resize_mel_spectrogram(mel_spec, target_shape):
     return scipy.ndimage.zoom(mel_spec, (1, target_shape / mel_spec.shape[1]))
 
+
 class AudioClassificationDataset(Dataset):
-    def __init__(self, data_dir, csv_file, transform=None, shuffle=False,batch_size = 10):
+    def __init__(self, data_dir, csv_file, transform=None, shuffle=False, batch_size=10):
         self.data_dir = data_dir
         self.csv_file = csv_file
         self.transform = transform
@@ -146,10 +174,10 @@ class AudioClassificationDataset(Dataset):
         self.shuffle = shuffle
         self.batch_size = batch_size
 
-    #Itt tortenik a labelek es a hozzajuk tartozo fileok kiszedese a csv segitsegevel
+    # Itt tortenik a labelek es a hozzajuk tartozo fileok kiszedese a csv segitsegevel
     def _load_data(self):
         data = pd.read_csv(self.csv_file)
-        #labels_arr = data['primary_label']
+        # labels_arr = data['primary_label']
         self.audio_data_filename_arr = data['filename']
 
         return self.audio_data_filename_arr
@@ -161,49 +189,45 @@ class AudioClassificationDataset(Dataset):
         fixed_size = 30
         ##TODO file does not exist check
         audio_file = os.path.join(audio_data_dir, self.audio_data_filename_arr[idx])
-        print('audiofile',audio_file)
+        print('audiofile', audio_file)
         self.labels = self.data.iloc[idx].split('/')[0]
-        #print('label',self.labels)
+        # print('label',self.labels)
 
         waveform, sample_rate = librosa.load(audio_file, sr=None)
 
-        melSpectogram = transformAudio(waveform,sample_rate)
+        melSpectogram = transformAudio(waveform, sample_rate)
 
         # Apply fixed size padding or trimming to each array in the list
         for i in range(len(melSpectogram)):
             # Ensure that each segment has the default shape (128, 626)
             if melSpectogram[i].shape != 626:
                 melSpectogram[i] = resize_mel_spectrogram(melSpectogram[i], 626)
+            mel_spec_db_tensor = torch.from_numpy(melSpectogram[i])
+            mel_spec_db_tensor = mel_spec_db_tensor.unsqueeze(0)
 
-        # Apply fixed size padding or trimming
-        # plt.figure(figsize=(10, 4))
-        # plt.plot(waveform.t().numpy())
-        # plt.xlabel('Time (s)')
-        # plt.ylabel('Amplitude')
-        # plt.title('Audio Waveform')
-        # plt.grid()
-        # plt.show()
+            class_label = self.data.iloc[idx].split('/')[0]
+            # print('label:', class_label)
 
-        #print('here'+self.labels)
-        #exit()
-        # Convert the label to a tensor (assuming it's an integer label)
-        # Retrieve the class label for this sample from your dataset's data source
-        class_label = self.data.iloc[idx].split('/')[0]
-        print('label:', class_label)
+            # Convert the class label to a numerical label
+            label_variable = label_to_number_mapping.get(class_label, -1)
+            # print('converted',converted_labels)
+            label_tensor = torch.tensor(label_variable, dtype=torch.long)  # Use torch.float32 for regression tasks
+            # print('Len of trimmed or padded melspec:', melSpectogram[0].shape)
+            # print('MelSpecShape',mel_spec_db_tensor.size())
+            return mel_spec_db_tensor, label_tensor
 
-        # Convert the class label to a numerical label
-        converted_labels = class_to_index[class_label]
-        label_tensor = torch.tensor(converted_labels, dtype=torch.long)  # Use torch.float32 for regression tasks
-        print('Len of trimmed or padded melspec:', melSpectogram[0].shape)
-
-        return melSpectogram,label_tensor
-
-
+    def collate_fn(self, batch):
+        # Pad the mel spectrograms within the batch to have the same length
+        padded_batch = torch.nn.utils.rnn.pad_sequence([item[0] for item in batch], batch_first=True)
+        ##TODO fix label conversion from string to number like bob - 0 for example this is the origin of the error now
+        labels = torch.tensor([item[1] for item in batch], dtype=torch.long)
+        # print('collate_label',labels)
+        return padded_batch, labels
 
 
 # Create an instance of your custom dataset
 batch_size = 32
-dataset = AudioClassificationDataset(audio_data_dir, csv_file, shuffle=True,batch_size=batch_size)
+dataset = AudioClassificationDataset(audio_data_dir, csv_file, shuffle=True, batch_size=batch_size)
 
 # Define train, validation, and test split ratios
 train_ratio = 0.7
@@ -230,23 +254,29 @@ train_sampler = torch.utils.data.SubsetRandomSampler(train_indices)
 val_sampler = torch.utils.data.SubsetRandomSampler(val_indices)
 test_sampler = torch.utils.data.SubsetRandomSampler(test_indices)
 
-  # Adjust as needed
-train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
-val_loader = DataLoader(dataset, batch_size=batch_size, sampler=val_sampler)
-test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
+# Adjust as needed
+train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler, collate_fn=dataset.collate_fn)
+val_loader = DataLoader(dataset, batch_size=batch_size, sampler=val_sampler, collate_fn=dataset.collate_fn)
+test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler, collate_fn=dataset.collate_fn)
 
 
-#print('dataset0',dataset[0])
+# Define a function to calculate accuracy
+def calculate_accuracy(outputs, labels):
+    _, predicted = torch.max(outputs, 1)
+    correct = (predicted == labels).sum().item()
+    accuracy = correct / labels.size(0)
+    return accuracy
+
 
 # Create a DataLoader to batch and shuffle the data
 batch_size = 32
 learning_rate = 0.001
 num_epochs = 10
-#dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+# dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 # Create an instance of the AudioClassifier model
-num_classes = 264  # Set the number of classes
-model = AudioClassifier(num_classes)
+num_classes = 263  # Set the number of classes
+model = AudioClassifier(num_classes=num_classes)
 
 # Print the model architecture
 print(model)
@@ -258,45 +288,84 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 # Define device (GPU or CPU)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
-print('here', train_loader)
+# print('here', train_loader)
 # exit()
 
-# Training loop
+# torch.cuda.synchronize()
 for epoch in range(num_epochs):
     model.train()
     running_loss = 0.0
-    for mel_spectrogram, labels in dataset:
 
-        mel_spectrogram = np.array(mel_spectrogram)
-        for index,lab in enumerate(mel_spectrogram):
-            #Visualize the Mel spectrogram
-            # plt.figure(figsize=(10, 4))
-            # librosa.display.specshow(mel_spectrogram[index], x_axis='time', y_axis='mel', sr=32000, hop_length=256,
-            #                          cmap='viridis')
-            # plt.colorbar(format='%+2.0f dB')
-            # plt.title('Mel Spectrogram')
-            # plt.show()
-            # Convert the NumPy array to a PyTorch tensor
-            print('sp:',mel_spectrogram[index].shape)
-            mel_spectrogram_tensor = torch.from_numpy(np.array(mel_spectrogram[index]))
-            print('tensor',mel_spectrogram_tensor)
-            mel_spectrogram_tensor.to(device)
-            labels.to(device)
-            optimizer.zero_grad()  # Zero the gradients
-            outputs = model(mel_spectrogram)  # Forward pass
+    for batch_idx, (mel_spectrograms, labels) in enumerate(train_loader):
+        # print('MelSpecsShape',mel_spectrograms.size())
+        # print('Label',labels)
+        mel_spectrograms = mel_spectrograms.to(device)
+        labels = labels.to(device)
+        print('label',labels)
 
-            loss = criterion(outputs, labels)  # Compute loss
-            loss.backward()  # Backpropagation
-            optimizer.step()  # Update model weights
-            running_loss += loss.item()
+        optimizer.zero_grad()  # Zero the gradients
 
-        exit()
-        # Transfer data to the selected device
+        # Forward pass
+        outputs = model(mel_spectrograms)
 
+        # Flatten the outputs and labels for computing the loss
+        outputs = outputs.view(outputs.size(0), -1)
+        labels = labels.view(labels.size(0))
+        # print('output',outputs)
+        # print('labs',labels)
+
+        # Compute the loss
+        loss = criterion(outputs, labels)
+
+        # Backpropagation
+        loss.backward()
+
+        # Update model weights
+        optimizer.step()
+        print('loss.item',loss.item)
+
+        running_loss += loss.item()
+
+        # Print mini-batch statistics
+        if batch_idx % 10 == 9:  # Print every 10 mini-batches
+            print(
+                f"Epoch [{epoch + 1}/{num_epochs}], Step [{batch_idx + 1}/{len(train_loader)}], Loss: {loss.item():.4f}")
 
     # Print average loss for the epoch
     average_loss = running_loss / len(train_loader)
-    print(f"Epoch [{epoch+1}/{num_epochs}] - Loss: {average_loss:.4f}")
+    print(f"Epoch [{epoch + 1}/{num_epochs}] - Loss: {average_loss:.4f}")
+
+    model.eval()  # Set the model to evaluation mode
+    val_loss = 0.0
+    total_accuracy = 0.0
+
+    # Validation run
+    with torch.no_grad():  # Disable gradient calculation for validation
+        for batch_idx, (mel_spectrograms, labels) in enumerate(val_loader):
+            mel_spectrograms = mel_spectrograms.to(device)
+            labels = labels.to(device)
+
+            # Forward pass
+            outputs = model(mel_spectrograms)
+            outputs = outputs.view(outputs.size(0), -1)
+            labels = labels.view(labels.size(0))
+            # print('Outputs size',outputs.size())
+            # print('Labels size',labels.size())
+
+            # Compute validation loss
+            loss = criterion(outputs, labels)
+            val_loss += loss.item()
+
+            # Calculate accuracy
+            accuracy = calculate_accuracy(outputs, labels)
+            total_accuracy += accuracy
+
+    # Average validation loss and accuracy over the validation dataset
+    avg_val_loss = val_loss / len(val_loader)
+    avg_accuracy = total_accuracy / len(val_loader)
+
+    # Print validation statistics
+    print(f"Validation - Epoch [{epoch + 1}/{num_epochs}], Loss: {avg_val_loss:.4f}, Accuracy: {avg_accuracy:.4f}")
 
 # Save the trained model (optional)
 torch.save(model.state_dict(), 'audio_classifier_model.pth')
