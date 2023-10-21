@@ -1,7 +1,5 @@
 ## Deepbirding
 ### Project members: Bence Bihari (IVXWF8), Lehel Hegyi (...), Máté Turi (...)
 ### Project description: 
-This is a university project teamwork for the Deep Learning course, we are taking part of the competition of BirdClef, 
-creating a deep learning model that can identify and classify different kind of bird's chirping. The base initial dataset can be founded in the official BirdClef description.
-
+This is a university project teamwork for the Deep Learning course. We are taking part in the BirdCLEF competition, where we are creating a deep learning model that can identify and classify different kinds of bird's chirping. The initial dataset can be found in the official BirdCLEF description.
 
