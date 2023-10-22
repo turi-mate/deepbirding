@@ -13,6 +13,5 @@ This is a university project teamwork for the Deep Learning course. We are takin
 - Request a Kaggle.json file key that authenticates the user in Google Colab in the following way:
 - ![image](https://github.com/turi-mate/deepbirding/assets/78791711/e299d2ad-88b9-489b-93f2-1eb206ae8097)
 - After this the data will be rady for use
-- With this key and with using the Kaggle api the user can fetch the dataset and use it for the model
 - In our case we have attached Google Drive to Colab downloaded the dataset there, this way there is no need for downloading the dataset on every runtime modification of Colab
 
