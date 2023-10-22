@@ -11,7 +11,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 ### Dataset Acquistion steps:
 - To use the competition's dataset you will need to create (if you do not already have) a Kaggle account.
 - In your account Setting tab generate a new token:
-- ![image](https://github.com/turi-mate/deepbirding/blob/main/instructions/creating_token.png)
+  ![image](https://github.com/turi-mate/deepbirding/blob/main/instructions/creating_token.png)
 - The token file will be automatically downloaded as 'kaggle.json' in your local machine
 - Enter the BirdCLEF 2023 competition from your account and accept the terms and rules of the competition to use the dataset at the Rules tab (https://www.kaggle.com/competitions/birdclef-2023/rules)
 - In your downloaded project file add the recieved kaggle.json file to your root project directory
