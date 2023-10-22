@@ -9,7 +9,7 @@ This is a university project teamwork for the Deep Learning course. We are takin
 
 ### Dataset acquisition (Google Colab environment):
 - One possible solution to acquire the competition's dataset is to create a (or use the existing) user on Kaggle and in your account Setting tab generate a new token.
-- 
+- ![image](https://github.com/turi-mate/deepbirding/blob/main/instructions/creating_token.png)
 - The token will be automatically downloaded as a kaggle.json file in your local machine.
 - 
 - and enter the BirdCLEF 2023 competition (https://www.kaggle.com/competitions/birdclef-2023)
