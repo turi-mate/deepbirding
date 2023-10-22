@@ -9,12 +9,17 @@ This is a university project teamwork for the Deep Learning course. We are takin
 - Converting audio files to Mel Spectograms: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
 
 ### Dataset acquistion steps:
-- Download the deepbirding Github repository to your local machine
-- To use the competition's dataset you will need to create (or use the existing if you already have) a Kaggle user, and in your account Setting tab generate a new token
+- To use the competition's dataset you will need to create (if you do not already have) a Kaggle account.
+- In your account Setting tab generate a new token:
 - ![image](https://github.com/turi-mate/deepbirding/blob/main/instructions/creating_token.png)
 - The token file will be automatically downloaded as 'kaggle.json' in your local machine
 - Enter the BirdCLEF 2023 competition from your account and accept the terms and rules of the competition to use the dataset at the Rules tab (https://www.kaggle.com/competitions/birdclef-2023/rules)
 - In your downloaded project file add the recieved kaggle.json file to your root project directory
-- With the kaggle.json key file the code is able to retrieve the dataset from Kaggle
-- After these steps the BirdCLEF2023 comptetition dataset will be ready for use
+- Now with the kaggle.json API key file the code is able to retrieve the dataset from Kaggle
+- We already wrote the code for the rest of the data acquisition part in th data_preprocessing.ipynb file
+- After these steps the BirdCLEF 2023 comptetition dataset will be ready to use
+
+### Dataset preprocessing:
+- For the data preprocessing part we made applied some data preparing methods and techniques to balance and fit the provided dataset for the model training:
+- 
 
