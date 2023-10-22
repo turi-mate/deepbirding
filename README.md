@@ -22,9 +22,9 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 ### Dataset Visualization and Preprocessing steps:
 - For the audio data visualization part we made a diagram that shows the waveform and the mel spectogram of an audio instance 
 - For the data preprocessing part we applied some data preparing methods and techniques to balance and fit the provided dataset for the model training:
-- Firstly, we analyzed the acquired dataset from two views and applied some changes to the dataset:
-* We inspected the length of the provided datafiles, and we decided that we should filter out those audio data instances that are too short (less than 2 seconds) and that are excessively long (more than 1 minute) for a training sample
-* We applied these changes to a new metadata file, so the original provided metadata file is also remained intact 
+  - We we analyzed the acquired dataset from two views and applied some changes to the dataset:
+  - We inspected the length of the provided datafiles, and we decided that we should filter out those audio data instances that are too short (less than 2 seconds) and that are excessively long (more than 1 minute) for a training sample
+- We applied these changes to a new metadata file, so the original provided metadata file is also remained intact 
 
 ### Data Preparation and Initial Training:
 - We made the data preparations for the CNN model in the training.ipynb so we can directly fit the dataset into the model that will be later trained
