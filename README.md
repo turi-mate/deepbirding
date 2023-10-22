@@ -8,7 +8,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - Feeding audio datas to CNN: https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
 - Converting audio files to Mel Spectograms: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
 
-### Dataset acquistion steps:
+### Dataset Acquistion steps:
 - To use the competition's dataset you will need to create (if you do not already have) a Kaggle account.
 - In your account Setting tab generate a new token:
 - ![image](https://github.com/turi-mate/deepbirding/blob/main/instructions/creating_token.png)
@@ -19,7 +19,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - We already wrote the code for the rest of the data acquisition part in the data_preprocessing.ipynb file
 - After these steps the BirdCLEF 2023 comptetition dataset will be ready to use
 
-### Dataset preprocessing:
+### Dataset Visualization and Preprocessing steps:
 - For the data preprocessing part we applied some data preparing methods and techniques to balance and fit the provided dataset for the model training:
 - Firstly, we analyzed the acquired dataset from two views and applied some changes to the dataset:
 * We inspected the length of the provided datafiles, and we decided that we should filter out those audio data instances that are too short (less than 2 seconds) and that are excessively long (more than 1 minute) for a training sample
