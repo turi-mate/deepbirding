@@ -26,3 +26,6 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 * We inspected the length of the provided datafiles, and we decided that we should filter out those audio data instances that are too short (less than 2 seconds) and that are excessively long (more than 1 minute) for a training sample
 * We applied these changes to a new metadata file, so the original provided metadata file is also remained intact 
 
+### Data Preparation and Initial Training:
+- We made the data preparations for the CNN model in the training.ipynb so we can directly fit the dataset into the model that will be later trained
+- We also made an initial model training using the Pytoch Lightning platform
