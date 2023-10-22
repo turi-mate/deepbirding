@@ -7,9 +7,9 @@ This is a university project teamwork for the Deep Learning course. We are takin
 - https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
 - https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
 
-### Dataset Acquisition:
+### Dataset acquisition:
 - One possible solution is to create a user on Kaggle and enter the BirdCLEF competition
 - Request a Kaggle.json file key that authenticates the user in colab
-- With this key and with using the Kaggle api the user can fetch the dataset and use it for the modell
+- With this key and with using the Kaggle api the user can fetch the dataset and use it for the model
 - In our case we have attached Google Drive to Colab downloaded the dataset there, this way there is no need for downloading the dataset on every runtime modification of Colab
 
