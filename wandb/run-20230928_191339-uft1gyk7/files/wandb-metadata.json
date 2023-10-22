@@ -1,0 +1,53 @@
+{
+    "os": "Windows-10-10.0.19045-SP0",
+    "python": "3.11.0",
+    "heartbeatAt": "2023-09-28T17:13:39.925190",
+    "startedAt": "2023-09-28T17:13:39.245066",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "C:\\Users\\tmate\\PycharmProjects\\deepbirding\\wandb_test.py",
+    "codePathLocal": "wandb_test.py",
+    "codePath": "wandb_test.py",
+    "git": {
+        "remote": "https://github.com/turi-mate/deepbirding.git",
+        "commit": "ff4d795ebd4c463e4a02ef6b6f099d3afa8ab55d"
+    },
+    "email": "turi.mate12@gmail.com",
+    "root": "C:/Users/tmate/PycharmProjects/deepbirding",
+    "host": "DESKTOP-1RO0APG",
+    "username": "tmate",
+    "executable": "C:\\Users\\tmate\\PycharmProjects\\deepbirding\\venv\\Scripts\\python.exe",
+    "cpu_count": 6,
+    "cpu_count_logical": 12,
+    "cpu_freq": {
+        "current": 2688.0,
+        "min": 0.0,
+        "max": 2688.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2688.0,
+            "min": 0.0,
+            "max": 2688.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 476.31914138793945,
+            "used": 404.73609161376953
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+            "memory_total": 4294967296
+        }
+    ],
+    "memory": {
+        "total": 31.83916473388672
+    }
+}

@@ -41,7 +41,6 @@ class AudioClassifier(nn.Module):
 
         self.dropout = nn.Dropout(0.5)
 
-
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
@@ -266,7 +265,6 @@ for epoch in range(num_epochs):
     running_loss = 0.0
 
     for mel_spectrogram, labels in train_loader:
-
         mel_spectrogram.to(device)
         labels.to(device)
 
