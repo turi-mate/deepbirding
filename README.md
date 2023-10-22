@@ -28,4 +28,4 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 
 ### Data Preparation and Initial Training:
 - We made the data preparations for the CNN model in the training.ipynb so we can directly fit the dataset into the model that will be later trained
-- We also made an initial model training using the Pytoch Lightning platform
+- We also made an initial model training using the Pytorch Lightning platform
