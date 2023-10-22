@@ -13,7 +13,7 @@ This is a university project teamwork for the Deep Learning course. We are takin
 - The token will be automatically downloaded as a kaggle.json file in your local machine.
 - 
 - and enter the BirdCLEF 2023 competition (https://www.kaggle.com/competitions/birdclef-2023)
-- ![image](https://github.com/turi-mate/deepbirding/assets/78791711/56e2b216-2996-46e4-aaff-5234b393237e)
+- ![image]([https://github.com/turi-mate/deepbirding/assets/78791711/56e2b216-2996-46e4-aaff-5234b393237e](https://github.com/turi-mate/deepbirding/blob/main/instructions/creating_token.png))
   
 - Add the recieved kaggle.json file upload the file to Google Colab:
 - ![image](https://github.com/turi-mate/deepbirding/assets/78791711/a1d35741-522b-4642-b149-de3df4f6b5f7)
