@@ -20,6 +20,8 @@ This is a university project teamwork for the Deep Learning course. We are takin
 - After these steps the BirdCLEF 2023 comptetition dataset will be ready to use
 
 ### Dataset preprocessing:
-- For the data preprocessing part we made applied some data preparing methods and techniques to balance and fit the provided dataset for the model training:
+- For the data preprocessing part we applied some data preparing methods and techniques to balance and fit the provided dataset for the model training:
+- Firstly, we analyzed the acuired dataset from two views and applied some changes to the dataset:
+- We inspected the length of the provided datafiles, and we decided that we should filter out those audio data instances that are too short (less than 2 sec) and that are radically long (more than 1 minute)
 - 
 
