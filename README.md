@@ -16,7 +16,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - Enter the BirdCLEF 2023 competition from your account and accept the terms and rules of the competition to use the dataset at the Rules tab (https://www.kaggle.com/competitions/birdclef-2023/rules)
 - In your downloaded project file add the recieved kaggle.json file to your root project directory
 - Now with the kaggle.json API key file the code is able to retrieve the dataset from Kaggle
-- We already wrote the code for the rest of the data acquisition part in th data_preprocessing.ipynb file
+- We already wrote the code for the rest of the data acquisition part in the data_preprocessing.ipynb file
 - After these steps the BirdCLEF 2023 comptetition dataset will be ready to use
 
 ### Dataset preprocessing:
