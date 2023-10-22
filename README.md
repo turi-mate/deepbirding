@@ -2,7 +2,7 @@
 ### Team members: 
 - Bence Bihari (IVXWF8), Lehel Hegyi (GSZLZ7), Máté Turi (OPVP7J)
 ### Project description: 
-This is a university project teamwork for the Deep Learning course. We are taking part in the BirdCLEF competition, where we are creating a deep learning model that can identify and classify different kinds of bird's chirping. The initial dataset can be found in the official BirdCLEF description
+This is a university project teamwork for the Deep Learning course. We are taking part in the BirdCLEF competition, where we are creating a deep learning model that can identify and classify different kinds of bird's chirping. The initial dataset can be found in the official BirdCLEF description.
 
 ### Resources used for data preparation:
 - Feeding audio datas to CNN: https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
@@ -16,5 +16,5 @@ This is a university project teamwork for the Deep Learning course. We are takin
 - Enter the BirdCLEF 2023 competition from your account and accept the terms and rules of the competition to use the dataset at: https://www.kaggle.com/competitions/birdclef-2023
 - In your downloaded project file add the recieved kaggle.json file to your root project directory
 - With the kaggle.json key file the code is able to retrieve the dataset from Kaggle
-- After these steps the data will be ready for use
+- After these steps the BirdCLEF2023 comptetition dataset will be ready for use
 
