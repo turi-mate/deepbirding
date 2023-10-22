@@ -9,12 +9,12 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - Converting audio files to Mel Spectograms: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
 
 ### Files and functions:
-- data_preprocessing.ipynb - in this Jupyter notebook file we are acquiring, preprocessing and visualizing the BirdCLEF 2023 competition dataset
-- training.ipynb - in this Jupyter notebook file we are preparing the dataset to fit the models that will be trained, we also made an initial training to check whether the dataset is well prepared
-- Dockerfile - we created an initial Dockerfile that will later be used for continerization
-- requirements.txt - requirements file that will be used to specify the dependencies and required packages
-- data - directory, where the dataset will be loaded
-- instructions - images that are used in the description
+- `data_preprocessing.ipynb` - in this Jupyter notebook file we are acquiring, preprocessing and visualizing the BirdCLEF 2023 competition dataset
+- `training.ipynb` - in this Jupyter notebook file we are preparing the dataset to fit the models that will be trained, we also made an initial training to check whether the dataset is well prepared
+- `Dockerfile` - we created an initial Dockerfile that will later be used for continerization
+- `requirements.txt` - requirements file that will be used to specify the dependencies and required packages
+- `data` - directory, where the dataset will be loaded
+- `instructions` - directory, images that are used in the description
   
 ### Dataset Acquistion steps:
 - To use the competition's dataset you will need to create (if you do not already have) a Kaggle account.
@@ -24,7 +24,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - Enter the BirdCLEF 2023 competition from your account and accept the terms and rules of the competition to use the dataset at the Rules tab (https://www.kaggle.com/competitions/birdclef-2023/rules)
 - In your downloaded project file add the recieved kaggle.json file to your root project directory
 - Now with the kaggle.json API key file the code is able to retrieve the dataset from Kaggle
-- We already wrote the code for the rest of the data acquisition part in the data_preprocessing.ipynb file
+- We already wrote the code for the rest of the data acquisition part in the `data_preprocessing.ipynb` file
 - After these steps the BirdCLEF 2023 comptetition dataset will be ready to use
 
 ### Dataset Visualization and Preprocessing steps:
@@ -32,8 +32,9 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - For the data preprocessing part we applied some data preparing methods and techniques to balance and fit the provided dataset for the model training:
   - We analyzed the acquired dataset from two views and applied some changes to the dataset:
   - We inspected the length of the provided datafiles, and we decided that we should filter out those audio data instances that are too short (less than 2 seconds) and that are excessively long (more than 1 minute) for a training sample
-- We applied these changes to a new metadata file, so the original provided metadata file is also remained intact 
+- We applied these changes to a new metadata file, so the original provided metadata file is also remained intact
+- Both of the visualization and preprocessing steps were done at the `data_preprocessing.ipynb` notebook file  
 
 ### Data Preparation and Initial Training:
-- We made the data preparations for the CNN model in the training.ipynb so we can directly fit the dataset into the model that will be later trained
+- We made the data preparations for the CNN model in the `training.ipynb` so we can directly fit the dataset into the model that will be later trained
 - We also made an initial model training using the Pytorch Lightning platform
