@@ -5,3 +5,4 @@ birdclef-2023.zip
 kaggle.json
 lightning_logs
 model_weights.pth
+wandb
