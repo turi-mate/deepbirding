@@ -8,7 +8,7 @@ This is a university project teamwork for the Deep Learning course. We are takin
 - https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
 
 ### Dataset acquisition:
-- One possible solution is to create a user on Kaggle and enter the BirdCLEF 2023 competition
+- One possible solution is to create a user on Kaggle and enter the BirdCLEF 2023 competition (https://www.kaggle.com/competitions/birdclef-2023)
 - ![image](https://github.com/turi-mate/deepbirding/assets/78791711/56e2b216-2996-46e4-aaff-5234b393237e)
   
 - Add the recieved kaggle.json file upload the file to Google Colab:
