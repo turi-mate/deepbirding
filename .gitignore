@@ -6,3 +6,4 @@ kaggle.json
 lightning_logs
 model_weights.pth
 wandb
+train_metadata_for_training.csv
