@@ -6,7 +6,7 @@ This is a university project teamwork for the Deep Learning course. We are takin
 
 ### Resources used for data preparation:
 - Feeding audio datas to CNN: https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
-- Melspectogram: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
+- Converting audio files to Mel Spectograms: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
 
 ### Dataset acquistion steps:
 - Download the deepbirding Github repository to your local machine
