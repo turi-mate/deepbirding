@@ -1,4 +1,7 @@
 .idea/
 venv/
-data/train_audio/
-data/train_audio.zip
+data
+birdclef-2023.zip
+kaggle.json
+lightning_logs
+model_weights.pth
