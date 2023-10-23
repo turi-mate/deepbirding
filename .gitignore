@@ -1,9 +1,7 @@
 .idea/
 venv/
-data
-birdclef-2023.zip
+data/*
+!data/README.md
 kaggle.json
 lightning_logs
 model_weights.pth
-wandb
-train_metadata_for_training.csv
