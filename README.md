@@ -1,6 +1,6 @@
 ## Deepbirding
 ### Team members: 
-- Bence Bihari (IVXWF8), Lehel Hegyi (GSZLZ7), Máté Turi (OPVP7J)
+- Bence Bihari (IVXWF8), Lehel Hegyi (GSZLZ7), Máté Turi (OPVP7J) left team after Milestone 1)
 ### Project description: 
 This is a university project teamwork for the Deep Learning course. Our task is to take part in the Kaggle BirdCLEF 2023 competition, where we are creating and training a deep learning model that could identify and classify different kinds of bird's chirping. The initial dataset can be found in the official BirdCLEF description.
 
