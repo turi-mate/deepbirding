@@ -4,10 +4,6 @@
 ### Project description: 
 This is a university project teamwork for the Deep Learning course. Our task is to take part in the Kaggle BirdCLEF 2023 competition, where we are creating and training a deep learning model that could identify and classify different kinds of bird's chirping. The initial dataset can be found in the official BirdCLEF description.
 
-### Resources used for data preparation:
-- Feeding audio datas to CNN: https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
-- Converting audio files to Mel Spectograms: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
-
 ### How to run the pipeline:
 - To run the pipeline the `data_preprocessing.ipynb` for the dataset preprocessing, the `training.ipynb` for the dataloading and model training,
   and for the evaluation `evaluation.ipynb` Jupyter notebooks should be run separately.
@@ -50,3 +46,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 ### Data Loading and Training:
 - We made the data loading for the CNN model in the `training.ipynb` so we can directly fit the dataset into the model that will be trained
 - We also made an initial model training using the Pytorch Lightning platform
+
+### Resources used:
+- Feeding audio datas to CNN: https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
+- Converting audio files to Mel Spectograms: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
