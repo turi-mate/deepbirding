@@ -8,6 +8,17 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - Feeding audio datas to CNN: https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
 - Converting audio files to Mel Spectograms: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
 
+### How to run the pipeline:
+- To run the pipeline the `data_preprocessing.ipynb` for the dataset preprocessing, the `training.ipynb` for the dataloading and model training,
+  and for the evaluation `evaluation.ipynb` Jupyter notebook should separately be run.
+   
+### How to train the models: 
+- To train the model we firstly need to make sure that we have the `filtered_metadata.csv` and the BirdCLEF2023 dataset in our root project folder.
+- After that we can run the `training.ipynb` Jupyter notebook to train our proposed custom model.
+  
+### How to evaluate the models: 
+- To evaluate the models 
+
 ### Files and functions:
 - `data_preprocessing.ipynb` - in this Jupyter notebook file we are acquiring, preprocessing and visualizing the BirdCLEF 2023 competition dataset
 - `training.ipynb` - in this Jupyter notebook file we are preparing the dataset to fit the models that will be trained, we also made an initial training to check whether the dataset is well prepared
@@ -27,14 +38,15 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - We already wrote the code for the rest of the data acquisition part in the `data_preprocessing.ipynb` file
 - After these steps the BirdCLEF 2023 comptetition dataset will be ready to use
 
-### Dataset Visualization and Preprocessing steps:
+### Dataset Visualization and Preparation steps:
+- The dataset isualization and preprocessing steps were done at the `data_preprocessing.ipynb` notebook file  
 - For the audio data visualization part we made a diagram that shows the waveform and the mel spectogram of an audio instance 
 - For the data preprocessing part we applied some data preparing methods and techniques to balance and fit the provided dataset for the model training:
   - We analyzed the acquired dataset from two views and applied some changes to the dataset:
   - We inspected the length of the provided datafiles, and we decided that we should filter out those audio data instances that are too short (less than 2 seconds) and that are excessively long (more than 1 minute) for a training sample
 - We applied these changes to a new metadata file, so the original provided metadata file is also remained intact
-- Both of the visualization and preprocessing steps were done at the `data_preprocessing.ipynb` notebook file  
+- The filtered metadatas can be found in the `datafiltering_results/filtered_metadata.csv` file
 
-### Data Preparation and Initial Training:
-- We made the data preparations for the CNN model in the `training.ipynb` so we can directly fit the dataset into the model that will be later trained
+### Data Loading and Training:
+- We made the data loading for the CNN model in the `training.ipynb` so we can directly fit the dataset into the model that will be trained
 - We also made an initial model training using the Pytorch Lightning platform
