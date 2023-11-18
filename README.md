@@ -10,7 +10,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 
 ### How to run the pipeline:
 - To run the pipeline the `data_preprocessing.ipynb` for the dataset preprocessing, the `training.ipynb` for the dataloading and model training,
-  and for the evaluation `evaluation.ipynb` Jupyter notebook should separately be run.
+  and for the evaluation `evaluation.ipynb` Jupyter notebooks should be run separately.
    
 ### How to train the models: 
 - To train the model we firstly need to make sure that we have the `filtered_metadata.csv` and the BirdCLEF2023 dataset in our root project folder.
