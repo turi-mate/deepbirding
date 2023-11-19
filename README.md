@@ -9,12 +9,13 @@ This is a university project teamwork for the Deep Learning course. Our task is 
   and for the evaluation `evaluation.ipynb` Jupyter notebooks should be run separately.
    
 ### How to train the models: 
-- To train the model we firstly need to make sure that we have the `filtered_metadata.csv` and the BirdCLEF2023 dataset in our root project folder.
+- To train the model we firstly need to make sure that we have the `filtered_metadata.csv` and the `BirdCLEF2023` dataset in our root project folder.
 - After that we can run the `training.ipynb` Jupyter notebook to train our proposed custom model.
   
 ### How to evaluate the models: 
-- To evaluate the models 
-
+- To evaluate the models you need to have the `filtered_metadata.csv` and the `BirdCLEF2023` dataset in our root project folder, and you will also need the trained model's checkpoint. 
+- After that we can run the `evaluation.ipynb` Jupyter notebook to test the custom model.
+ 
 ### Files and functions:
 - `data_preprocessing.ipynb` - in this Jupyter notebook file we are acquiring, preprocessing and visualizing the BirdCLEF 2023 competition dataset
 - `training.ipynb` - in this Jupyter notebook file we are preparing the dataset to fit the models that will be trained, we also made an initial training to check whether the dataset is well prepared
