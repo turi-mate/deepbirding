@@ -5,8 +5,8 @@
 This is a university project teamwork for the Deep Learning course. Our task is to take part in the Kaggle BirdCLEF 2023 competition, where we are creating and training a deep learning model that could identify and classify different kinds of bird's chirping. The initial dataset can be found in the official BirdCLEF description.
 
 ### How to run the pipeline:
-- To run the pipeline the `data_preprocessing.ipynb` for the dataset preprocessing, the `training.ipynb` for the dataloading and model training,
-  and for the evaluation `evaluation.ipynb` Jupyter notebooks should be run separately.
+- To run the pipeline the `data_preprocessing.ipynb` for the dataset preprocessing,for the dataloading and model training the `training.ipynb`,
+  and for the evaluation the `evaluation.ipynb`. The Jupyter notebooks should be run separately.
    
 ### How to train the models: 
 - To train the model we firstly need to make sure that we have the `filtered_metadata.csv` and the `BirdCLEF2023` dataset in our root project folder.
