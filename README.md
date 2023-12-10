@@ -30,6 +30,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - `requirements.txt` - requirements file that will be used to specify the dependencies and required packages
 - `data/` - directory, where the dataset will be loaded
 - `instructions/` - directory, images that are used in the description
+- `results/` - directory, where the results of the training-evaluation pipeline can be found
   
 ### Dataset Acquistion steps:
 - To use the competition's dataset you will need to create (if you do not already have) a Kaggle account.
@@ -49,7 +50,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
   - We analyzed the acquired dataset from two views and applied some changes to the dataset:
   - We inspected the length of the provided datafiles, and we decided that we should filter out those audio data instances that are too short (less than 2 seconds) and that are excessively long (more than 1 minute) for a training sample
 - We applied these changes to a new metadata file, so the original provided metadata file is also remained intact
-- The filtered metadatas can be found in the `datafiltering_results/filtered_metadata.csv` file
+- The filtered metadatas can be found in the `results/filtered_metadata.csv` file
 
 ### Data Loading and Training:
 - We made the data loading for the CNN model in the `training.ipynb` so we can directly fit the dataset into the model that will be trained
