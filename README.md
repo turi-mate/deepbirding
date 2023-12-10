@@ -55,7 +55,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 ### Weights and Biases Access for the best modell file
 - The trained modell wheights are located in our team Wandb project as artifacts. Due to size issues we could not upload the modell weights to GitHub.
 - We recommend for the best experience to contact us for access to the Wandb project and this way both the Dashboards and the Artifacts can be accessed.
-- The modell weights can be found in this link: https://drive.google.com/file/d/1FYlRX_3Qsv4ZG5Q0KDyixZS_sx3ABviC/view?usp=sharing
+- The best modell weights can be found in this link: https://drive.google.com/file/d/1FYlRX_3Qsv4ZG5Q0KDyixZS_sx3ABviC/view?usp=sharing
 
 ### Resources used:
 - Feeding audio datas to CNN: https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
