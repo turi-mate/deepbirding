@@ -57,6 +57,11 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - We recommend for the best experience to contact us for access to the Wandb project and this way both the Dashboards and the Artifacts can be accessed.
 - The best modell weights can be found in this link: https://drive.google.com/file/d/1FYlRX_3Qsv4ZG5Q0KDyixZS_sx3ABviC/view?usp=sharing
 
+### UI Evaluation Component
+- The user needs to have access for the WandbAi project called "deepbirding" to be able to run this notebook successfully as it is dependant on the artifact of current best modell
+- For access contacts us at hegyilehel@gmail.com send us your Weights and Biases username or email
+- After that the request will be handled and the user will be able to use the UI component notebook
+
 ### Resources used:
 - Feeding audio datas to CNN: https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
 - Converting audio files to Mel Spectograms: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
