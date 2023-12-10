@@ -52,6 +52,10 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - We made the data loading for the CNN model in the `training.ipynb` so we can directly fit the dataset into the model that will be trained
 - We also made an initial model training using the Pytorch Lightning platform
 
+### Weights and Biases Access for the best modell file
+- The trained modell wheights are located in our team Wandb project as artifacts. Due to size issues we could not upload the modell weights to GitHub.
+- We recommend for the best experience to contact us for access to the Wandb project and this way both the Dashboards and the Artifacts can be accessed.
+
 ### Resources used:
 - Feeding audio datas to CNN: https://www.mdpi.com/2076-3417/11/13/5796?fbclid=IwAR2IWzKZQIj5DcqTbg4VubWJs8CSr0RKhLYVCPOj95zc9-YkkW0WgR8iKsQ
 - Converting audio files to Mel Spectograms: https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5
