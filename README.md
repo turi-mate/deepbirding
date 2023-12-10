@@ -9,7 +9,8 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 
 ### How to run the pipeline:
 - To run the pipeline the `data_preprocessing.ipynb` for the dataset preprocessing,for the dataloading and model training the `training.ipynb`,
-  and for the evaluation the `evaluation.ipynb`. The Jupyter notebooks should be run separately.
+  and for the evaluation the `evaluation.ipynb`. These Jupyter notebooks should be run separately.
+- For the interactive evaluation run the `evaluation_interactive.ipynb` Jupyter notebook.
    
 ### How to train the models: 
 - To train the model we firstly need to make sure that we have the `filtered_metadata.csv` and the `BirdCLEF2023` dataset in our root project folder.
@@ -18,15 +19,18 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 ### How to evaluate the models: 
 - To evaluate the models you need to have the `filtered_metadata.csv` and the `BirdCLEF2023` dataset in our root project folder, and you will also need the trained model's checkpoint. 
 - After that we can run the `evaluation.ipynb` Jupyter notebook to test the custom model.
+- You can also evaluate the model interactively with the `evaluation_interactive.ipynb`.
  
 ### Files and functions:
 - `data_preprocessing.ipynb` - in this Jupyter notebook file we are acquiring, preprocessing and visualizing the BirdCLEF 2023 competition dataset
 - `training.ipynb` - in this Jupyter notebook file we are preparing the dataset to fit the models that will be trained, we also made an initial training to check whether the dataset is well prepared
 - `evaluation.ipynb` - in this Jupyter notebook file we test the model that we train earlier in the training phase
+- `evaluation_interactive.ipynb` - in this Jupyter notebook file you can interactively test the model by adding your selected audio file to the model
 - `Dockerfile` - we created an initial Dockerfile that will later be used for continerization
 - `requirements.txt` - requirements file that will be used to specify the dependencies and required packages
 - `data/` - directory, where the dataset will be loaded
 - `instructions/` - directory, images that are used in the description
+- `results/` - directory, where the results of the training-evaluation pipeline can be found
   
 ### Dataset Acquistion steps:
 - To use the competition's dataset you will need to create (if you do not already have) a Kaggle account.
@@ -46,7 +50,7 @@ This is a university project teamwork for the Deep Learning course. Our task is 
   - We analyzed the acquired dataset from two views and applied some changes to the dataset:
   - We inspected the length of the provided datafiles, and we decided that we should filter out those audio data instances that are too short (less than 2 seconds) and that are excessively long (more than 1 minute) for a training sample
 - We applied these changes to a new metadata file, so the original provided metadata file is also remained intact
-- The filtered metadatas can be found in the `datafiltering_results/filtered_metadata.csv` file
+- The filtered metadatas can be found in the `results/filtered_metadata.csv` file
 
 ### Data Loading and Training:
 - We made the data loading for the CNN model in the `training.ipynb` so we can directly fit the dataset into the model that will be trained
