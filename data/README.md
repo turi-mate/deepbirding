@@ -1,3 +1,4 @@
+### This is the dataset dictionary that will be populated with the dataset after running the pipeline
 ### Dataset Acquistion steps:
 - To use the competition's dataset you will need to create (if you do not already have) a Kaggle account.
 - In your account Setting tab generate a new token:
