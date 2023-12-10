@@ -19,11 +19,13 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 ### How to evaluate the models: 
 - To evaluate the models you need to have the `filtered_metadata.csv` and the `BirdCLEF2023` dataset in our root project folder, and you will also need the trained model's checkpoint. 
 - After that we can run the `evaluation.ipynb` Jupyter notebook to test the custom model.
+- You can also evaluate the model interactively with the `evaluation_interactive.ipynb`.
  
 ### Files and functions:
 - `data_preprocessing.ipynb` - in this Jupyter notebook file we are acquiring, preprocessing and visualizing the BirdCLEF 2023 competition dataset
 - `training.ipynb` - in this Jupyter notebook file we are preparing the dataset to fit the models that will be trained, we also made an initial training to check whether the dataset is well prepared
 - `evaluation.ipynb` - in this Jupyter notebook file we test the model that we train earlier in the training phase
+- `evaluation_interactive.ipynb` - in this Jupyter notebook file you can interactively test the model by adding your selected audio file to the model
 - `Dockerfile` - we created an initial Dockerfile that will later be used for continerization
 - `requirements.txt` - requirements file that will be used to specify the dependencies and required packages
 - `data/` - directory, where the dataset will be loaded
