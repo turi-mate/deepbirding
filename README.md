@@ -25,8 +25,8 @@ This is a university project teamwork for the Deep Learning course. Our task is 
 - `evaluation.ipynb` - in this Jupyter notebook file we test the model that we train earlier in the training phase
 - `Dockerfile` - we created an initial Dockerfile that will later be used for continerization
 - `requirements.txt` - requirements file that will be used to specify the dependencies and required packages
-- `data` - directory, where the dataset will be loaded
-- `instructions` - directory, images that are used in the description
+- `data/` - directory, where the dataset will be loaded
+- `instructions/` - directory, images that are used in the description
   
 ### Dataset Acquistion steps:
 - To use the competition's dataset you will need to create (if you do not already have) a Kaggle account.
