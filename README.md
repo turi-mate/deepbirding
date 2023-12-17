@@ -5,7 +5,7 @@
 This is a university project teamwork for the Deep Learning course. Our task is to take part in the Kaggle BirdCLEF 2023 competition, where we are creating and training a deep learning model that could identify and classify different kinds of east-african bird's calls. The initial dataset can be found in the official BirdCLEF description.
 
 ### Project presentation (in Hungarian):
-- Can be fount in the `presentation.pptx` file
+- Can be found in the `presentation.pptx` file
 
 ### Project final documentation (in Hungarian):
 - Can be read in the `final_documentation.pdf` file
